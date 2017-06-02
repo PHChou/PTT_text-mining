@@ -3,8 +3,8 @@ title: Shiny
 account: phchou
 server: shinyapps.io
 appId: 185051
-bundleId: 847490
+bundleId: 850500
 url: https://phchou.shinyapps.io/Shiny/
-when: 1496246727.20325
+when: 1496410376.00086
 asMultiple: FALSE
 asStatic: FALSE
