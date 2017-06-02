@@ -44,8 +44,9 @@ ui <- fluidPage(
     mainPanel(
       wordcloud2Output("f.word.cloud",width = "100%", height = "600px"),
       tableOutput('ddata'),
-      tableOutput("f.data"),
-      textOutput("output")
+      textOutput("f.txt"),
+      tableOutput("f.data")
+      
       ,width=9) 
   )
 )
@@ -90,11 +91,12 @@ server <- function(input, output) {
                                                         filters1 =  data.type1() , filters2= data.type2() , col1 = 3,  
                                                         stopword =  excludes() ,
                                                         output_select = "file"  )[1:10,]
-                           colnames( w.table ) <- c("詞彙",'出現次數')
+                           w.table <- t(w.table)
+                           rownames( w.table ) <- c("詞彙",'出現次數')
                            w.table  })
   
-  output$f.data  <- renderTable({ word.table() } )
-  
+  output$f.data  <- renderTable({ word.table() } ,rownames = T, colnames = F)
+  output$f.txt   <- renderText({ paste("共有",nrow(mydata),'篇文章,其中',nrow(used.data()),'篇文章符合篩選條件')})
   #data.type1 <- reactive 
 
   
