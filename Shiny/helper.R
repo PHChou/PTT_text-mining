@@ -18,9 +18,9 @@ super_grepl <- function ( filters, rdata, excludes = NA, col ){
   
   data3  }
 
-worker(dict="jieba.dict.utf8",hmm="hmm_model.utf8",user="user.dict.utf8")
 
-cc<- jiebaR:: worker(dict="jieba.dict.utf8",hmm="hmm_model.utf8",user="user.dict.utf8")
+cc<- jiebaR:: worker() #for PC
+#cc<- jiebaR:: worker(dict="jieba.dict.utf8",hmm="hmm_model.utf8",user="user.dict.utf8") # for shiny server 
 
 super_jieba_cloud <- function ( rawdata, filters1, filters2, col1,  
                                 stopword = c( 0:10,LETTERS,letters) ,
