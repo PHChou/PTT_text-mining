@@ -19,8 +19,8 @@ super_grepl <- function ( filters, rdata, excludes = NA, col ){
   data3  }
 
 
-#cc<- jiebaR:: worker() #for PC
-cc<- jiebaR:: worker(dict="jieba.dict.utf8",hmm="hmm_model.utf8",user="user.dict.utf8") # for shiny server 
+cc<- jiebaR:: worker() #for PC
+#cc<- jiebaR:: worker(dict="jieba.dict.utf8",hmm="hmm_model.utf8",user="user.dict.utf8") # for shiny server 
 
 super_jieba_cloud <- function ( rawdata, filters1, filters2, col1,  
                                 stopword = c( 0:10,LETTERS,letters) ,
@@ -34,7 +34,7 @@ super_jieba_cloud <- function ( rawdata, filters1, filters2, col1,
     jiebaR::segment(d3, cc) }
   #刪掉rdata中有stopwords的，再輸出剩下的資料
   stop_words_exclude <- function ( stopwords, rdata, col ){ data <- rdata[,col]
-  used <- which( grepl( paste( stopwords, collapse = "|" ), x= data) ==T)
+  used <- which( grepl( paste( na.exclude(stopwords), collapse = "|" ), x= data) ==T)
   rdata[-used,] }
   
   #抓符合filter1,filter2的資料

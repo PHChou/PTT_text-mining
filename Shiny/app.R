@@ -27,26 +27,26 @@ ui <- fluidPage(
                     "男&女" = "both"),
                   selected = "both"),
       
-      selectInput("data.typee", "資料類型",
+      selectInput("data.type", "資料類型",
                   c("科目" = "subject.type",
                     "地點" = "location.type"
                   )),
       h5(strong("排除關鍵字")),
       textInput("exclude.1",label = NA,value = '的'),
-      textInput("exclude.2",label = NA,value = NA),
-      textInput("exclude.3",label = NA,value = NA),
-      textInput("exclude.4",label = NA,value = NA),
-      textInput("exclude.5",label = NA,value = NA),
-      textInput("exclude.6",label = NA,value = NA)
-    ),
+      textInput("exclude.2",label = NA,value = '-'),
+      textInput("exclude.3",label = NA,value = '-'),
+      textInput("exclude.4",label = NA,value = '-'),
+      textInput("exclude.5",label = NA,value = '-'),
+      textInput("exclude.6",label = NA,value = "-")
+      ,width = 3 ),
     
 
     mainPanel(
-      wordcloud2Output("f.word.cloud"),
+      wordcloud2Output("f.word.cloud",width = "100%", height = "600px"),
       tableOutput('ddata'),
       tableOutput("f.data"),
       textOutput("output")
-    )
+      ,width=9) 
   )
 )
 
@@ -67,16 +67,33 @@ server <- function(input, output) {
   #used.data <- reactive({ super_grepl( c( input$art.type ),rdata= mydata ,col = 1) %>%
   #                        super_grepl( gender(),rdata= . ,col = 3)  })
   #不知道為何shiny沒辦法library(magrittr)
+  
+  data.type1<- reactive ({ switch(input$data.type, "subject.type"="科目",'location.type'='地點')})
+  data.type2<- reactive ({ switch(input$data.type, "subject.type"="上課時間",'location.type'='科目')})
+  
+  excludes  <- reactive ({  c(0:10,LETTERS,letters,'地點','附近',
+                             "上","科目",'4.','的','及',"與","二",
+                             '為主','中','科','請','安全','注意','自身',
+                             '站','財物',"或",'可','的','近','路','中',
+                             '等','區',input$exclude.1,input$exclude.2,input$exclude.3
+                             ,input$exclude.4,input$exclude.5,input$exclude.6) })
+  
+  
   word.plot <- reactive({ super_jieba_cloud(rawdata  = used.data(),
-                                            filters1 = c('地點'), filters2= c('科目'), col1 = 3,  
-                                            stopword = c( 0:10,LETTERS,letters,'地點','附近',
-                                                          "上","科目",'4.','的','及',"與","二",
-                                                          '為主','中','科','請','安全','注意','自身',
-                                                          '站','財物',"或",'可','的','近','路','中',
-                                                          '等','區') ,
+                                            filters1 =  data.type1() , filters2= data.type2() , col1 = 3,  
+                                            stopword =  excludes() ,
                                             output_select = "cloud"  )  })
   
   output$f.word.cloud <- renderWordcloud2( { word.plot() }) 
+  
+  word.table <- reactive({ w.table <- super_jieba_cloud(rawdata  = used.data(),
+                                                        filters1 =  data.type1() , filters2= data.type2() , col1 = 3,  
+                                                        stopword =  excludes() ,
+                                                        output_select = "file"  )[1:10,]
+                           colnames( w.table ) <- c("詞彙",'出現次數')
+                           w.table  })
+  
+  output$f.data  <- renderTable({ word.table() } )
   
   #data.type1 <- reactive 
 
@@ -89,6 +106,5 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
 
 
