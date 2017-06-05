@@ -82,14 +82,14 @@ server <- function(input, output) {
   
   word.plot <- reactive({ super_jieba_cloud(rawdata  = used.data(),
                                             filters1 =  data.type1() , filters2= data.type2() , col1 = 3,  
-                                            stopword =  excludes() ,
+                                            excludeword =  excludes() ,
                                             output_select = "cloud"  )  })
   
   output$f.word.cloud <- renderWordcloud2( { word.plot() }) 
   
   word.table <- reactive({ w.table <- super_jieba_cloud(rawdata  = used.data(),
                                                         filters1 =  data.type1() , filters2= data.type2() , col1 = 3,  
-                                                        stopword =  excludes() ,
+                                                        excludeword =  excludes() ,
                                                         output_select = "file"  )[1:10,]
                            w.table <- t(w.table)
                            rownames( w.table ) <- c("詞彙",'出現次數')
