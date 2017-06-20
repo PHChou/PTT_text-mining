@@ -1,4 +1,4 @@
-mydata <- read.csv("www/art.data.csv")
+mydata <- read.csv("www/articles data.csv")
 
 source("helper.R")
 
@@ -14,44 +14,45 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       
-      checkboxGroupInput("art.type", "文章種類 (可複選)",
-                         choiceNames =
-                           list("家教", "上台" , "交換" ),
-                         choiceValues =
-                           list("家教", "上台" , "交換" ),
-                         selected = "家教"
-      ),
-      selectInput("gender.type", "性別",
-                  c("男" = "boy",
-                    "女" = "girl",
-                    "男&女" = "both"),
-                  selected = "both"),
+      h4( checkboxGroupInput("art.type", "文章種類 (可複選)",
+                              choiceNames =
+                               list("家教", "上台" , "交換" ),
+                              choiceValues =
+                                list("家教", "上台" , "交換" ),
+                              selected = "家教"
+      )),
+      h4( selectInput("gender.type", "性別",
+                             c("男" = "boy",
+                               "女" = "girl",
+                               "男&女" = "both"),
+                             selected = "both")),
       
-      selectInput("data.type", "資料類型",
-                  c("科目" = "subject.type",
-                    "地點" = "location.type"
-                  )),
-      h5(strong("排除關鍵字")),
-      textInput("exclude.1",label = NA,value = '的'),
-      textInput("exclude.2",label = NA,value = '-'),
-      textInput("exclude.3",label = NA,value = '-'),
-      textInput("exclude.4",label = NA,value = '-'),
-      textInput("exclude.5",label = NA,value = '-'),
-      textInput("exclude.6",label = NA,value = "-")
+      h4( selectInput("data.type", "資料類型",
+                              c("科目" = "subject.type",
+                                "地點" = "location.type"
+                                 ))),
+      h4( strong("排除關鍵字")),
+      h4( textInput("exclude.1",label = NA,value = '的')),
+      h4( textInput("exclude.2",label = NA,value = '-')),
+      h4( textInput("exclude.3",label = NA,value = '-')),
+      h4( textInput("exclude.4",label = NA,value = '-')),
+      h4( textInput("exclude.5",label = NA,value = '-')),
+      h4( textInput("exclude.6",label = NA,value = "-"))
       ,width = 3 ),
     
 
     mainPanel(
-      h4("利用R軟體抓取"
+      h4("此Shiny App利用R軟體抓取"
          ,a(href ='https://www.ptt.cc/bbs/HomeTeach/index.html',"PTT家教版"),
-         "文章後，使用"
+         "2015年5月至2017年5月發表之文章後，使用"
          ,a(href = 'https://github.com/qinwf/jiebaR','jueba R套件'),
-         "對文章內容進行斷詞，並依照不同的篩選條件（文章類型、性別、常用字）
-         ，以文字雲的方式呈現PTT家教版中常出現的字詞。"),
+         "對文章內容進行斷詞，並依照不同的篩選條件(文章類型、性別、常用字)，",
+         "以文字雲的方式呈現文章中科目欄或地點欄常出現的字詞，",
+         "藉以評估PTT家教版中具有較大需求的科目和地點。"),
       wordcloud2Output("f.word.cloud",width = "100%", height = "600px"),
       tableOutput('ddata'),
-      textOutput("f.txt"),
-      tableOutput("f.data")
+      h4( textOutput("f.txt")),
+      div( tableOutput("f.data") , style = 'font-size:130%')
       
       ,width=9) 
   )
@@ -102,7 +103,7 @@ server <- function(input, output) {
                            w.table  })
   
   output$f.data  <- renderTable({ word.table() } ,rownames = T, colnames = F)
-  output$f.txt   <- renderText({ paste("共有",nrow(mydata),'篇文章,其中',nrow(used.data()),'篇文章符合篩選條件')})
+  output$f.txt   <- renderText({ paste("共有",nrow(used.data()),'篇文章符合篩選條件')})
   #data.type1 <- reactive 
 
   
