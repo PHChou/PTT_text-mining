@@ -9,7 +9,7 @@ library(shiny)
 
 ui <- fluidPage(
   
-  titlePanel("Old Faithful Geyser Data"),
+  titlePanel("PTT家教版 文字探勘"),
   
   sidebarLayout(
     sidebarPanel(
@@ -42,6 +42,12 @@ ui <- fluidPage(
     
 
     mainPanel(
+      h4("利用R軟體抓取"
+         ,a(href ='https://www.ptt.cc/bbs/HomeTeach/index.html',"PTT家教版"),
+         "文章後，使用"
+         ,a(href = 'https://github.com/qinwf/jiebaR','jueba R套件'),
+         "對文章內容進行斷詞，並依照不同的篩選條件（文章類型、性別、常用字）
+         ，以文字雲的方式呈現PTT家教版中常出現的字詞。"),
       wordcloud2Output("f.word.cloud",width = "100%", height = "600px"),
       tableOutput('ddata'),
       textOutput("f.txt"),
@@ -74,7 +80,7 @@ server <- function(input, output) {
   
   excludes  <- reactive ({  c(0:10,LETTERS,letters,'地點','附近',
                              "上","科目",'4.','的','及',"與","二",
-                             '為主','中','科','請','安全','注意','自身',
+                             '為主','中','科','請','安全','注意','自身','國',
                              '站','財物',"或",'可','的','近','路','中',
                              '等','區',input$exclude.1,input$exclude.2,input$exclude.3
                              ,input$exclude.4,input$exclude.5,input$exclude.6) })
