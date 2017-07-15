@@ -9,53 +9,89 @@ library(shiny)
 
 ui <- fluidPage(
   
-  titlePanel("PTT家教版 文字探勘"),
+  titlePanel("家教學生需求分析 The Analysis of Students' Tutoring Demand"),
   
-  sidebarLayout(
-    sidebarPanel(
+  tabsetPanel(
+    tabPanel('Help Text', 
+             h4("目的"),
+             h4("藉由"
+                ,a(href ='https://www.ptt.cc/bbs/HomeTeach/index.html',"PTT家教版"),
+                "發表的文章，分析台灣學生家教需求，進而找出可分類不同家教學生族群的特徵。"),
+             
+             h4("材料"),
+             h4('PTT家教版2015/05/01至2017/05/01所發表徵求家教老師或交換才藝之文章。'),
+             
+             h4("方法"),
+             h4('利用R進行網路爬蟲抓取PTT家教版文章後，使用',
+                a(href = 'https://github.com/qinwf/jiebaR','juebaR套件'),
+                '將各個完整的文章進行斷詞後，以',
+                a(href = 'https://cran.r-project.org/web/packages/wordcloud2/wordcloud2.pdf','文字雲'),
+                '呈現PTT家教版中常出現的字詞與頻率，以做為分類家教學生族群特徵的參考。'),
+             
+             br(),
+             br(),
+             
+             h4('Aim'),
+             h4("This analysis aim to detect the characteristics that can classify the students' tutoring demand from"
+                ,a(href ='https://www.ptt.cc/bbs/HomeTeach/index.html',"PTT Tutor"),'.' ),
+             h4('Material'),
+             h4('The articles posted at PTT Tutor for tutoring demand or exchange skills from 2015/05/01 to 2017/05/01.'),
+             h4("Method"),
+             h4('By using R software, the articles were crawled from PTT Tutor firstly. After that, each article was segmented to vocabularies by ',
+                a(href = 'https://github.com/qinwf/jiebaR','juebaR package'),
+                '. To be the references of classification, the most used vocabularies and its frequencies are presented in the ',
+                a(href = 'https://cran.r-project.org/web/packages/wordcloud2/wordcloud2.pdf','wordcloud'),
+                ' and frequency table.')),
+    tabPanel('Word Cloud & Frequency Table',sidebarLayout(
+      sidebarPanel(
+        h4(strong("1. 選擇欲分析的文章種類")),
+        h4( checkboxGroupInput("art.type", "Choose the type of article.",
+                               choiceNames =
+                                 list("家教 Needed tutoring", "交換 Skill exchange" ),
+                               choiceValues =
+                                 list("家教", "交換" ),
+                               selected = "家教"
+        )),
+        br(),
+        h4(strong("2. 選擇學生性別")),
+        h4( selectInput("gender.type", "Choose the gender of student.",
+                        c("男 Male" = "boy",
+                          "女 Female" = "girl",
+                          "男&女 Both" = "both"),
+                        selected = "both")),
+        
+        br(),
+        h4(strong("3. 選擇欲分析之項目")),
+        h4( selectInput("data.type", "Choose the object of analysis",
+                        c("科目 Subject" = "subject.type",
+                          "地點 Location" = "location.type"
+                        ))),
+        br(),
+        h4( strong("4. 輸入分析中欲排除之常用字詞")),
+        h4( strong("Input the commonly used vocabularies which are excluded from the analysis.")),
+        h4( textInput("exclude.1",label = NA,value = '的')),
+        h4( textInput("exclude.2",label = NA,value = '-')),
+        h4( textInput("exclude.3",label = NA,value = '-')),
+        h4( textInput("exclude.4",label = NA,value = '-')),
+        h4( textInput("exclude.5",label = NA,value = '-')),
+        h4( textInput("exclude.6",label = NA,value = "-"))
+        ,width = 3 ),
       
-      h4( checkboxGroupInput("art.type", "文章種類 (可複選)",
-                              choiceNames =
-                               list("家教", "上台" , "交換" ),
-                              choiceValues =
-                                list("家教", "上台" , "交換" ),
-                              selected = "家教"
-      )),
-      h4( selectInput("gender.type", "性別",
-                             c("男" = "boy",
-                               "女" = "girl",
-                               "男&女" = "both"),
-                             selected = "both")),
       
-      h4( selectInput("data.type", "資料類型",
-                              c("科目" = "subject.type",
-                                "地點" = "location.type"
-                                 ))),
-      h4( strong("排除關鍵字")),
-      h4( textInput("exclude.1",label = NA,value = '的')),
-      h4( textInput("exclude.2",label = NA,value = '-')),
-      h4( textInput("exclude.3",label = NA,value = '-')),
-      h4( textInput("exclude.4",label = NA,value = '-')),
-      h4( textInput("exclude.5",label = NA,value = '-')),
-      h4( textInput("exclude.6",label = NA,value = "-"))
-      ,width = 3 ),
-    
-
-    mainPanel(
-      h4("此Shiny App利用R軟體抓取"
-         ,a(href ='https://www.ptt.cc/bbs/HomeTeach/index.html',"PTT家教版"),
-         "2015年5月至2017年5月發表之文章後，使用"
-         ,a(href = 'https://github.com/qinwf/jiebaR','jueba R套件'),
-         "對文章內容進行斷詞，並依照不同的篩選條件(文章類型、性別、常用字)，",
-         "以文字雲的方式呈現文章中科目欄或地點欄常出現的字詞，",
-         "藉以評估PTT家教版中具有較大需求的科目和地點。"),
-      wordcloud2Output("f.word.cloud",width = "100%", height = "600px"),
-      tableOutput('ddata'),
-      h4( textOutput("f.txt")),
-      div( tableOutput("f.data") , style = 'font-size:130%')
-      
-      ,width=9) 
+      mainPanel(
+        
+        
+        wordcloud2Output("f.word.cloud",width = "100%", height = "600px"),
+        tableOutput('ddata'),
+        h4( textOutput("f.txt")),
+        div( tableOutput("f.data") , style = 'font-size:130%')
+        
+        ,width=9) 
+    )
+    )
+        
   )
+  
 )
 
 
@@ -80,9 +116,9 @@ server <- function(input, output) {
   data.type2<- reactive ({ switch(input$data.type, "subject.type"="上課時間",'location.type'='科目')})
   
   excludes  <- reactive ({  c(0:10,LETTERS,letters,'地點','附近',
-                             "上","科目",'4.','的','及',"與","二",
+                             "上","科目",'4.','的','及',"與","二",'你','他',
                              '為主','中','科','請','安全','注意','自身','國',
-                             '站','財物',"或",'可','的','近','路','中',
+                             '站','財物',"或",'可','的','近','路','中',"換","我",
                              '等','區',input$exclude.1,input$exclude.2,input$exclude.3
                              ,input$exclude.4,input$exclude.5,input$exclude.6) })
   
